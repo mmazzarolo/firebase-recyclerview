@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">firebase-recycleview</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="firebase_location" translatable="false">https://recyclerview.firebaseio.com/</string>
+
+</resources>
