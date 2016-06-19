@@ -15,13 +15,13 @@ import java.util.ArrayList;
 /**
  * Created by Matteo on 24/08/2015.
  * Updated on 19/06/2016 following https://firebase.google.com/support/guides/firebase-android.
- * <p/>
+ * 
  * This class is a generic way of backing an Android RecyclerView with a Firebase location.
  * It handles all of the child events at the given Firebase location.
  * It marshals received data into the given class type.
  * Extend this class and provide an implementation of the abstract methods, which will notify when
  * the adapter list changes.
- * <p/>
+ * 
  * This class also simplifies the management of configuration change (e.g.: device rotation)
  * allowing the restore of the list.
  *
