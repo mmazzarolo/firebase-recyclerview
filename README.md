@@ -3,7 +3,7 @@
 <br/>
 <br/>
 
-Firebase Recyclerview is a generic way of backing an Android RecyclerView with a Firebase location.
+A generic way of backing an Android RecyclerView with a Firebase location.
 - It handles all of the child events at the given Firebase location.
 - It marshals received data into the given class type.
 - Simplifies the management of configuration change (e.g.: device rotation) allowing the restoring of the list.
