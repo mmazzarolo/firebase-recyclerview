@@ -30,9 +30,9 @@ public class MyAdapter extends FirebaseRecyclerAdapter<MyAdapter.ViewHolder, MyI
         }
     }
 
-    public MyAdapter(Query query, Class<MyItem> itemClass, @Nullable ArrayList<MyItem> items,
+    public MyAdapter(Query query, @Nullable ArrayList<MyItem> items,
                      @Nullable ArrayList<String> keys) {
-        super(query, itemClass, items, keys);
+        super(query, items, keys);
     }
 
     @Override public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
