@@ -10,57 +10,54 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 
 /**
  * Created by Matteo on 24/08/2015.
  * Updated on 19/06/2016 following https://firebase.google.com/support/guides/firebase-android.
- * 
+ * <p>
  * This class is a generic way of backing an Android RecyclerView with a Firebase location.
  * It handles all of the child events at the given Firebase location.
  * It marshals received data into the given class type.
  * Extend this class and provide an implementation of the abstract methods, which will notify when
  * the adapter list changes.
- * 
+ * <p>
  * This class also simplifies the management of configuration change (e.g.: device rotation)
  * allowing the restore of the list.
  *
  * @param <T> The class type to use as a model for the data contained in the children of the
  *            given Firebase location
  */
-public abstract class FirebaseRecyclerAdapter<ViewHolder extends RecyclerView.ViewHolder, T>
-        extends RecyclerView.Adapter<ViewHolder> {
+public abstract class FirebaseRecyclerAdapter<ViewHolder extends RecyclerView.ViewHolder, T> extends RecyclerView.Adapter<ViewHolder> {
 
     private Query mQuery;
-    private Class<T> mItemClass;
     private ArrayList<T> mItems;
     private ArrayList<String> mKeys;
 
     /**
-     * @param query     The Firebase location to watch for data changes.
-     *                  Can also be a slice of a location, using some combination of
-     *                  <code>limit()</code>, <code>startAt()</code>, and <code>endAt()</code>.
-     * @param itemClass The class of the items.
+     * @param query The Firebase location to watch for data changes.
+     *              Can also be a slice of a location, using some combination of
+     *              <code>limit()</code>, <code>startAt()</code>, and <code>endAt()</code>.
      */
-    public FirebaseRecyclerAdapter(Query query, Class<T> itemClass) {
-        this(query, itemClass, null, null);
+    public FirebaseRecyclerAdapter(Query query) {
+        this(query, null, null);
     }
 
     /**
-     * @param query     The Firebase location to watch for data changes.
-     *                  Can also be a slice of a location, using some combination of
-     *                  <code>limit()</code>, <code>startAt()</code>, and <code>endAt()</code>.
-     * @param itemClass The class of the items.
-     * @param items     List of items that will load the adapter before starting the listener.
-     *                  Generally null or empty, but this can be useful when dealing with a
-     *                  configuration change (e.g.: reloading the adapter after a device rotation).
-     *                  Be careful: keys must be coherent with this list.
-     * @param keys      List of keys of items that will load the adapter before starting the listener.
-     *                  Generally null or empty, but this can be useful when dealing with a
-     *                  configuration change (e.g.: reloading the adapter after a device rotation).
-     *                  Be careful: items must be coherent with this list.
+     * @param query The Firebase location to watch for data changes.
+     *              Can also be a slice of a location, using some combination of
+     *              <code>limit()</code>, <code>startAt()</code>, and <code>endAt()</code>.
+     * @param items List of items that will load the adapter before starting the listener.
+     *              Generally null or empty, but this can be useful when dealing with a
+     *              configuration change (e.g.: reloading the adapter after a device rotation).
+     *              Be careful: keys must be coherent with this list.
+     * @param keys  List of keys of items that will load the adapter before starting the listener.
+     *              Generally null or empty, but this can be useful when dealing with a
+     *              configuration change (e.g.: reloading the adapter after a device rotation).
+     *              Be careful: items must be coherent with this list.
      */
-    public FirebaseRecyclerAdapter(Query query, Class<T> itemClass,
+    public FirebaseRecyclerAdapter(Query query,
                                    @Nullable ArrayList<T> items,
                                    @Nullable ArrayList<String> keys) {
         this.mQuery = query;
@@ -71,7 +68,6 @@ public abstract class FirebaseRecyclerAdapter<ViewHolder extends RecyclerView.Vi
             mItems = new ArrayList<T>();
             mKeys = new ArrayList<String>();
         }
-        this.mItemClass = itemClass;
         query.addChildEventListener(mListener);
     }
 
@@ -81,7 +77,7 @@ public abstract class FirebaseRecyclerAdapter<ViewHolder extends RecyclerView.Vi
             String key = dataSnapshot.getKey();
 
             if (!mKeys.contains(key)) {
-                T item = dataSnapshot.getValue(FirebaseRecyclerAdapter.this.mItemClass);
+                T item = getConvertedObject(dataSnapshot);
                 int insertedPosition;
                 if (previousChildName == null) {
                     mItems.add(0, item);
@@ -111,7 +107,7 @@ public abstract class FirebaseRecyclerAdapter<ViewHolder extends RecyclerView.Vi
             if (mKeys.contains(key)) {
                 int index = mKeys.indexOf(key);
                 T oldItem = mItems.get(index);
-                T newItem = dataSnapshot.getValue(FirebaseRecyclerAdapter.this.mItemClass);
+                T newItem = getConvertedObject(dataSnapshot);
 
                 mItems.set(index, newItem);
 
@@ -141,7 +137,7 @@ public abstract class FirebaseRecyclerAdapter<ViewHolder extends RecyclerView.Vi
             String key = dataSnapshot.getKey();
 
             int index = mKeys.indexOf(key);
-            T item = dataSnapshot.getValue(FirebaseRecyclerAdapter.this.mItemClass);
+            T item = getConvertedObject(dataSnapshot);
             mItems.remove(index);
             mKeys.remove(index);
             int newPosition;
@@ -256,7 +252,9 @@ public abstract class FirebaseRecyclerAdapter<ViewHolder extends RecyclerView.Vi
      * @param key      Key of the added item
      * @param position Position of the added item in the adapter
      */
-    protected abstract void itemAdded(T item, String key, int position);
+    protected void itemAdded(T item, String key, int position) {
+
+    }
 
     /**
      * Called after an item changed
@@ -266,7 +264,9 @@ public abstract class FirebaseRecyclerAdapter<ViewHolder extends RecyclerView.Vi
      * @param key      Key of the changed item
      * @param position Position of the changed item in the adapter
      */
-    protected abstract void itemChanged(T oldItem, T newItem, String key, int position);
+    protected void itemChanged(T oldItem, T newItem, String key, int position) {
+
+    }
 
     /**
      * Called after an item has been removed from the adapter
@@ -275,7 +275,9 @@ public abstract class FirebaseRecyclerAdapter<ViewHolder extends RecyclerView.Vi
      * @param key      Key of the removed item
      * @param position Position of the removed item in the adapter
      */
-    protected abstract void itemRemoved(T item, String key, int position);
+    protected void itemRemoved(T item, String key, int position) {
+
+    }
 
     /**
      * Called after an item changed position
@@ -285,6 +287,27 @@ public abstract class FirebaseRecyclerAdapter<ViewHolder extends RecyclerView.Vi
      * @param oldPosition Old position of the changed item in the adapter
      * @param newPosition New position of the changed item in the adapter
      */
-    protected abstract void itemMoved(T item, String key, int oldPosition, int newPosition);
+    protected void itemMoved(T item, String key, int oldPosition, int newPosition) {
+
+    }
+
+    /**
+     * Converts the data snapshot to generic object
+     *
+     * @param snapshot Result
+     * @return Data converted
+     */
+    protected T getConvertedObject(DataSnapshot snapshot) {
+        return snapshot.getValue(getGenericClass());
+    }
+
+    /**
+     * Returns a class reference from generic T.
+     */
+    @SuppressWarnings("unchecked")
+    private Class<T> getGenericClass() {
+        return (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[1];
+    }
 
 }
+
