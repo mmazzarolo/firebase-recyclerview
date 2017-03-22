@@ -1,8 +1,7 @@
 # Firebase Recyclerview <img src="https://github.com/mmazzarolo/firebase-recyclerview/blob/master/extras/firebase-recyclerview-logo.png" width="90" align="left"> 
 ##### *Easily link your RecyclerView to a Firebase location.*
-<br/>
-<br/>
-
+&nbsp;  
+&nbsp;  
 A generic way of backing an Android RecyclerView with a Firebase location.
 - It handles all of the child events at the given Firebase location.
 - It marshals received data into the given class type.
