@@ -1,3 +1,6 @@
+
+## Disclaimer: This repo is not mainained anymore  
+
 # Firebase Recyclerview <img src="https://github.com/mmazzarolo/firebase-recyclerview/blob/master/extras/firebase-recyclerview-logo.png" width="90" align="left"> 
 ##### *Easily link your RecyclerView to a Firebase location.*
 &nbsp;  
